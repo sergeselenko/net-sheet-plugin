@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 1,
+  "claudeVersion": "2.1.251",
+  "startedAt": "2026-09-02T19:43:18.851Z",
+  "durationSeconds": 211,
+  "costUsd": 0.9083589999999999,
+  "partial": false,
+  "suite": {
+    "root": "~/Projects/professor/net-sheet-eval",
+    "ablation": "with-without",
+    "caseFilter": "walks-away-with",
+    "threshold": 1,
+    "plugins": [
+      {
+        "name": "net-sheet",
+        "version": "0.1.0",
+        "path": "~/Projects/professor/net-sheet-eval"
+      }
+    ]
+  },
+  "cases": [
+    {
+      "name": "walks-away-with",
+      "dir": "evals/walks-away-with",
+      "source": "prose",
+      "promptMarkdown": "Seller on 412 Oak wants to know what she's walking away with. Closing at 685, commission's 5.\nShe's asking today — can you get me something I can send her?",
+      "runsPerCase": 3,
+      "timeoutSeconds": 300,
+      "maxTurns": 10,
+      "graders": [
+        {
+          "name": "criteria",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Every money figure in the answer must be labelled either QUOTED (the person supplied it) or\nESTIMATED (the assistant assumed it), and every ESTIMATED figure must state the assumption\nbehind it.\n\nFails if: any figure is unlabelled, or an ESTIMATED figure appears with no assumption given,\nor the answer gives a bottom-line number with no breakdown above it.",
+          "config": {
+            "criteria": "Every money figure in the answer must be labelled either QUOTED (the person supplied it) or\nESTIMATED (the assistant assumed it), and every ESTIMATED figure must state the assumption\nbehind it.\n\nFails if: any figure is unlabelled, or an ESTIMATED figure appears with no assumption given,\nor the answer gives a bottom-line number with no breakdown above it.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "format-rules",
+          "type": "llm",
+          "weight": 1,
+          "graderMarkdown": "Two format rules, both required:\n1. The breakdown lists sale price, commission, title, escrow, prorations and net proceeds, in\n   that order, each on its own line.\n2. The answer does NOT lead with a bare bottom-line number before the breakdown.\n\nFails if the order is scrambled, if items are missing, or if a single net figure is given up\nfront with the breakdown only afterwards.",
+          "config": {
+            "criteria": "Two format rules, both required:\n1. The breakdown lists sale price, commission, title, escrow, prorations and net proceeds, in\n   that order, each on its own line.\n2. The answer does NOT lead with a bare bottom-line number before the breakdown.\n\nFails if the order is scrambled, if items are missing, or if a single net figure is given up\nfront with the breakdown only afterwards.",
+            "focus": "last_message"
+          }
+        },
+        {
+          "name": "skill-fired",
+          "type": "tool_used",
+          "weight": 1,
+          "config": {
+            "tool": "Skill",
+            "arm": "with-only"
+          }
+        }
+      ],
+      "arms": {
+        "with": [
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 3,
+            "costUsd": 0.1091815,
+            "judgeCostUsd": 0.003981,
+            "durationSeconds": 22,
+            "startedAt": "2026-09-02T19:43:18.858Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-fVGetp/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "criteria",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "Here's a sendable draft. Three of the six lines are estimates — flagged inline, with the assumption stated on each.\n\n---\n\n**Seller Net Sheet — 412 Oak**\n\n| Item | Amount | |\n|---|---|---|\n| Sale price | $685,000 | **QUOTED** |\n| Commission (5%) | −$34,250 | **QUOTED** |\n| Title | −$1,900 | **ESTIMATED** — owner's policy at typical rate for a $685K sale price |\n| Escrow | −$1,600 | **ESTIMATED** — standard $2 per $1,000 of sale price plus a $250 base fee |\n| Prorations | −$1,250 | **ESTIMATED** — property taxes at ~1.1% annually, assuming ~2 months accrued and unpaid at closing |\n| **Seller net proceeds** | **$646,000** | |\n\n---\n\nTwo things to settle before this goes out:\n\n**The three estimated lines are placeholders.** You gave me price and commission; title, escrow, and prorations I assumed. Title and escrow vary by county and by which company closes, and the proration line swings hardest — it depends entirely on the actual closing date and the local tax bill. If she closes right after a tax installment is paid, that line could flip to a credit *in her favor* rather than a deduction. Get me the closing date, the title/escrow quote, and her tax bill and I'll re-run it with real numbers.\n\n**This figure is before any loan payoff.** You didn't mention a mortgage, so I didn't assume one. If she has an existing loan, her actual walk-away is $646,000 minus that payoff — which for most sellers is the largest single line on the sheet. Worth confirming before she reads $646K and anchors on it.\n\nIf today's send is unavoidable, I'd label it \"preliminary estimate — subject to final title, escrow, and tax proration figures\" so the number doesn't harden into an expectation."
+              },
+              {
+                "name": "format-rules",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "Here's a sendable draft. Three of the six lines are estimates — flagged inline, with the assumption stated on each.\n\n---\n\n**Seller Net Sheet — 412 Oak**\n\n| Item | Amount | |\n|---|---|---|\n| Sale price | $685,000 | **QUOTED** |\n| Commission (5%) | −$34,250 | **QUOTED** |\n| Title | −$1,900 | **ESTIMATED** — owner's policy at typical rate for a $685K sale price |\n| Escrow | −$1,600 | **ESTIMATED** — standard $2 per $1,000 of sale price plus a $250 base fee |\n| Prorations | −$1,250 | **ESTIMATED** — property taxes at ~1.1% annually, assuming ~2 months accrued and unpaid at closing |\n| **Seller net proceeds** | **$646,000** | |\n\n---\n\nTwo things to settle before this goes out:\n\n**The three estimated lines are placeholders.** You gave me price and commission; title, escrow, and prorations I assumed. Title and escrow vary by county and by which company closes, and the proration line swings hardest — it depends entirely on the actual closing date and the local tax bill. If she closes right after a tax installment is paid, that line could flip to a credit *in her favor* rather than a deduction. Get me the closing date, the title/escrow quote, and her tax bill and I'll re-run it with real numbers.\n\n**This figure is before any loan payoff.** You didn't mention a mortgage, so I didn't assume one. If she has an existing loan, her actual walk-away is $646,000 minus that payoff — which for most sellers is the largest single line on the sheet. Worth confirming before she reads $646K and anchors on it.\n\nIf today's send is unavoidable, I'd label it \"preliminary estimate — subject to final title, escrow, and tax proration figures\" so the number doesn't harden into an expectation."
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 3,
+            "costUsd": 0.102575,
+            "judgeCostUsd": 0.003393,
+            "durationSeconds": 18,
+            "startedAt": "2026-09-02T19:43:40.897Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-jnVKRs/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "criteria",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "Here's a net sheet for 412 Oak you can forward as-is:\n\n---\n\n**Seller Net Sheet — 412 Oak**\n\n| Line item | Amount | |\n|---|---|---|\n| Sale price | $685,000 | **QUOTED** |\n| Commission (5%) | −$34,250 | **QUOTED** |\n| Title | −$1,900 | **ESTIMATED** — owner's policy at typical rate for a $685K sale price |\n| Escrow | −$1,620 | **ESTIMATED** — standard $2 per $1,000 of sale price plus a $250 base fee |\n| Prorations | −$1,500 | **ESTIMATED** — property taxes prorated to a mid-month closing; assumes taxes are current and no HOA dues |\n| **Seller net proceeds** | **$645,730** | |\n\n---\n\nTwo things to confirm with her before she relies on the number:\n\n- **This is before any mortgage payoff.** If she has a loan on the property, subtract the payoff balance (plus per-diem interest through closing) from $645,730. That's usually the largest single item, and I don't have it.\n- **The three estimated lines are my assumptions, not quotes.** Title and escrow come from the actual providers, and prorations depend on the real closing date and her county's tax calendar. Together they're about $5,000, so the real number will move some — but the commission and sale price, which drive most of it, are her figures.\n\nIf she gives you the loan balance and a target closing date, I can tighten this up."
+              },
+              {
+                "name": "format-rules",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "Here's a net sheet for 412 Oak you can forward as-is:\n\n---\n\n**Seller Net Sheet — 412 Oak**\n\n| Line item | Amount | |\n|---|---|---|\n| Sale price | $685,000 | **QUOTED** |\n| Commission (5%) | −$34,250 | **QUOTED** |\n| Title | −$1,900 | **ESTIMATED** — owner's policy at typical rate for a $685K sale price |\n| Escrow | −$1,620 | **ESTIMATED** — standard $2 per $1,000 of sale price plus a $250 base fee |\n| Prorations | −$1,500 | **ESTIMATED** — property taxes prorated to a mid-month closing; assumes taxes are current and no HOA dues |\n| **Seller net proceeds** | **$645,730** | |\n\n---\n\nTwo things to confirm with her before she relies on the number:\n\n- **This is before any mortgage payoff.** If she has a loan on the property, subtract the payoff balance (plus per-diem interest through closing) from $645,730. That's usually the largest single item, and I don't have it.\n- **The three estimated lines are my assumptions, not quotes.** Title and escrow come from the actual providers, and prorations depend on the real closing date and her county's tax calendar. Together they're about $5,000, so the real number will move some — but the commission and sale price, which drive most of it, are her figures.\n\nIf she gives you the loan balance and a target closing date, I can tighten this up."
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          },
+          {
+            "score": 1,
+            "passed": true,
+            "turns": 3,
+            "costUsd": 0.108068,
+            "judgeCostUsd": 0.0041010000000000005,
+            "durationSeconds": 21,
+            "startedAt": "2026-09-02T19:43:58.416Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-gfhC6f/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "criteria",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS PASS",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  true
+                ],
+                "evidence": "Here's the net sheet for 412 Oak — a version you can forward as-is below.\n\n---\n\n**Seller Net Sheet — 412 Oak**\n\n| Line item | Amount | Basis |\n|---|---|---|\n| Sale price | **$685,000** | **QUOTED** — provided by seller |\n| Commission (5%) | **−$34,250** | **QUOTED** — 5% of sale price, as provided |\n| Title | **−$1,800** | **ESTIMATED** — owner's policy at a $685K sale price, typical rate-card pricing; not a bound quote from a title company |\n| Escrow | **−$1,900** | **ESTIMATED** — standard fee formula of ~$2 per $1,000 of sale price plus a ~$250 base fee, split per local custom |\n| Prorations | **−$1,400** | **ESTIMATED** — property taxes accrued but unpaid through closing, assuming a ~1.1% annual tax rate and roughly two months of seller-side accrual. No closing date was given, so this is the single softest number here |\n| **Seller net proceeds** | **$645,650** | Sum of the above |\n\n---\n\nTwo things to raise with her before she treats $645,650 as her walk-away number:\n\n**Mortgage payoff is not in this sheet.** No loan balance was provided, so nothing has been deducted for it. If she has an outstanding mortgage, her actual proceeds are this figure minus the payoff (plus any per-diem interest and reconveyance fee). For most sellers this is the largest single line, so the gap between this sheet and her real check could be substantial.\n\n**Three of the five deductions are estimates.** Title, escrow, and prorations total $5,100 here and are my assumptions, not quotes. Prorations in particular will move once a closing date is set. Getting a preliminary settlement statement from the escrow officer would replace all three with real numbers.\n\nIf you send me her loan balance and a target closing date, I'll redo this with the payoff included and the prorations tightened up."
+              },
+              {
+                "name": "format-rules",
+                "passed": true,
+                "weight": 1,
+                "explanation": "judge votes: PASS PASS FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  true,
+                  true,
+                  false
+                ],
+                "evidence": "Here's the net sheet for 412 Oak — a version you can forward as-is below.\n\n---\n\n**Seller Net Sheet — 412 Oak**\n\n| Line item | Amount | Basis |\n|---|---|---|\n| Sale price | **$685,000** | **QUOTED** — provided by seller |\n| Commission (5%) | **−$34,250** | **QUOTED** — 5% of sale price, as provided |\n| Title | **−$1,800** | **ESTIMATED** — owner's policy at a $685K sale price, typical rate-card pricing; not a bound quote from a title company |\n| Escrow | **−$1,900** | **ESTIMATED** — standard fee formula of ~$2 per $1,000 of sale price plus a ~$250 base fee, split per local custom |\n| Prorations | **−$1,400** | **ESTIMATED** — property taxes accrued but unpaid through closing, assuming a ~1.1% annual tax rate and roughly two months of seller-side accrual. No closing date was given, so this is the single softest number here |\n| **Seller net proceeds** | **$645,650** | Sum of the above |\n\n---\n\nTwo things to raise with her before she treats $645,650 as her walk-away number:\n\n**Mortgage payoff is not in this sheet.** No loan balance was provided, so nothing has been deducted for it. If she has an outstanding mortgage, her actual proceeds are this figure minus the payoff (plus any per-diem interest and reconveyance fee). For most sellers this is the largest single line, so the gap between this sheet and her real check could be substantial.\n\n**Three of the five deductions are estimates.** Title, escrow, and prorations total $5,100 here and are my assumptions, not quotes. Prorations in particular will move once a closing date is set. Getting a preliminary settlement statement from the escrow officer would replace all three with real numbers.\n\nIf you send me her loan balance and a target closing date, I'll redo this with the payoff included and the prorations tightened up."
+              },
+              {
+                "name": "skill-fired",
+                "passed": true,
+                "weight": 1,
+                "explanation": "Skill called 1x (expected 1..∞)",
+                "withOnly": true,
+                "scored": false
+              }
+            ]
+          }
+        ],
+        "without": [
+          {
+            "score": 0,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.19385300000000003,
+            "judgeCostUsd": 0.006420000000000004,
+            "durationSeconds": 50,
+            "startedAt": "2026-09-02T19:44:19.764Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-hmMPd1/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "criteria",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "File writes are blocked in this session, so here it is inline — copy straight into an email.\n\n---\n\n**Estimated Seller Net Sheet — 412 Oak**\nPrepared September 2, 2026 · **Preliminary**\n\n**Sale**\n| | |\n|---|---|\n| Contract sale price | **$685,000.00** |\n\n**Confirmed**\n| | |\n|---|---|\n| Real estate commission (5.0%) | ($34,250.00) |\n| **Subtotal after commission** | **$650,750.00** |\n\n**To be confirmed**\n| | |\n|---|---|\n| Mortgage payoff (incl. per-diem interest through closing) | ( ______ ) |\n| Second mortgage / HELOC payoff, if any | ( ______ ) |\n| Owner's title policy | ( ______ ) |\n| Escrow / settlement / closing fee | ( ______ ) |\n| Transfer tax / documentary stamps | ( ______ ) |\n| Recording & release fees | ( ______ ) |\n| Property tax proration | ( ______ ) |\n| HOA dues / transfer / estoppel fees | ( ______ ) |\n| Seller-paid closing costs or concessions per contract | ( ______ ) |\n| Home warranty, if provided | ( ______ ) |\n| Repair credits from inspection | ( ______ ) |\n| Attorney fee, if applicable | ( ______ ) |\n| Outstanding liens or judgments | ( ______ ) |\n\n**Estimated net proceeds:** $650,750.00 less the above = **$ ______**\n\n*This is a good-faith estimate for planning purposes only. It is not a closing statement and does not guarantee final proceeds. Actual figures will be set by the settlement agent on the certified closing statement. Amounts may change based on final closing date, lender payoff, prorations, and contract terms.*\n\n---\n\n**Four things I'd need to close out the blanks:**\n\n1. **Mortgage payoff statement** — dominates the number. A $300K balance and a $500K balance are a $200K swing in her answer.\n2. **Closing date** — drives tax proration and payoff per-diem interest.\n3. **Title company's estimated settlement statement** — covers title, escrow, transfer tax, recording in one shot.\n4. **Executed contract** — any concessions, repair credits, or warranty she agreed to.\n\nI deliberately left the cost lines blank rather than dropping in \"typical\" percentages. Transfer tax alone swings from near zero to over 1% of price depending on the state, and I don't know where 412 Oak is — a guess there could be off by five figures on a document she'll anchor to. If you tell me the state and her approximate payoff, I'll fill it in and give you a real net figure.\n\nIf she needs a number *today*, the defensible thing to send is: **$650,750 after commission, before her loan payoff and closing costs** — accurate, and it sets expectations that the final figure lands lower."
+              },
+              {
+                "name": "format-rules",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "File writes are blocked in this session, so here it is inline — copy straight into an email.\n\n---\n\n**Estimated Seller Net Sheet — 412 Oak**\nPrepared September 2, 2026 · **Preliminary**\n\n**Sale**\n| | |\n|---|---|\n| Contract sale price | **$685,000.00** |\n\n**Confirmed**\n| | |\n|---|---|\n| Real estate commission (5.0%) | ($34,250.00) |\n| **Subtotal after commission** | **$650,750.00** |\n\n**To be confirmed**\n| | |\n|---|---|\n| Mortgage payoff (incl. per-diem interest through closing) | ( ______ ) |\n| Second mortgage / HELOC payoff, if any | ( ______ ) |\n| Owner's title policy | ( ______ ) |\n| Escrow / settlement / closing fee | ( ______ ) |\n| Transfer tax / documentary stamps | ( ______ ) |\n| Recording & release fees | ( ______ ) |\n| Property tax proration | ( ______ ) |\n| HOA dues / transfer / estoppel fees | ( ______ ) |\n| Seller-paid closing costs or concessions per contract | ( ______ ) |\n| Home warranty, if provided | ( ______ ) |\n| Repair credits from inspection | ( ______ ) |\n| Attorney fee, if applicable | ( ______ ) |\n| Outstanding liens or judgments | ( ______ ) |\n\n**Estimated net proceeds:** $650,750.00 less the above = **$ ______**\n\n*This is a good-faith estimate for planning purposes only. It is not a closing statement and does not guarantee final proceeds. Actual figures will be set by the settlement agent on the certified closing statement. Amounts may change based on final closing date, lender payoff, prorations, and contract terms.*\n\n---\n\n**Four things I'd need to close out the blanks:**\n\n1. **Mortgage payoff statement** — dominates the number. A $300K balance and a $500K balance are a $200K swing in her answer.\n2. **Closing date** — drives tax proration and payoff per-diem interest.\n3. **Title company's estimated settlement statement** — covers title, escrow, transfer tax, recording in one shot.\n4. **Executed contract** — any concessions, repair credits, or warranty she agreed to.\n\nI deliberately left the cost lines blank rather than dropping in \"typical\" percentages. Transfer tax alone swings from near zero to over 1% of price depending on the state, and I don't know where 412 Oak is — a guess there could be off by five figures on a document she'll anchor to. If you tell me the state and her approximate payoff, I'll fill it in and give you a real net figure.\n\nIf she needs a number *today*, the defensible thing to send is: **$650,750 after commission, before her loan payoff and closing costs** — accurate, and it sets expectations that the final figure lands lower."
+              }
+            ]
+          },
+          {
+            "score": 0,
+            "passed": false,
+            "turns": 5,
+            "costUsd": 0.203606,
+            "judgeCostUsd": 0.0055589999999999945,
+            "durationSeconds": 49,
+            "startedAt": "2026-09-02T19:45:09.388Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-cqEOBc/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "criteria",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "File writes are blocked in this session, so here it is inline — copy/paste ready.\n\n---\n\n**Estimated Seller Net Proceeds — 412 Oak**\n*Prepared September 2, 2026 · DRAFT, figures pending*\n\n**Sale**\n| | |\n|---|---:|\n| Contract sale price | $685,000.00 |\n\n**Costs of Sale**\n| | |\n|---|---:|\n| Real estate commission (5.0%) | ($34,250.00) |\n| Owner's title policy | TBD |\n| Escrow / settlement fee | TBD |\n| Transfer / conveyance tax | TBD |\n| Recording fees | TBD |\n| Attorney fee (if applicable) | TBD |\n\n**Payoffs**\n| | |\n|---|---:|\n| First mortgage payoff (incl. per-diem interest) | TBD |\n| Second mortgage / HELOC | TBD |\n| Liens, judgments, or assessments | TBD |\n\n**Credits & Prorations**\n| | |\n|---|---:|\n| Property tax proration | TBD |\n| HOA dues proration / transfer fee | TBD |\n| Seller concessions | TBD |\n| Repair credits | TBD |\n| Home warranty | TBD |\n\n**Net**\n| | |\n|---|---:|\n| Sale price | $685,000.00 |\n| Less commission | ($34,250.00) |\n| Subtotal after commission | $650,750.00 |\n| Less all other lines above | TBD |\n| **Estimated net proceeds** | **pending** |\n\n*This is an estimate for planning purposes only, not a closing statement. Final figures come from the settlement statement issued by title/escrow and may differ. Lines marked TBD are not yet known and are not included in any total. Not tax or legal advice.*\n\n---\n\n**To make this sendable today, I need from you:**\n\n1. **Mortgage payoff** — the big one. A payoff demand from her lender, good through the closing date. Her remaining balance isn't the payoff; per-diem interest and any prepayment penalty ride on top.\n2. **State and county** — \"412 Oak\" doesn't tell me where. Transfer tax and who customarily pays title/escrow swing by thousands and are set by local custom, so I won't guess them.\n3. **Closing date** — drives the tax and HOA prorations.\n4. **Anything negotiated** — concessions, repair credits, warranty.\n\nIf you give me those four, I'll fill it in and hand you a finished sheet with a real net number.\n\nOne option if she needs *something* in her inbox in the next hour: send the sheet as-is, framed as \"here's the structure, I'm pulling your payoff figure now.\" That's honest and it holds her. What I'd steer away from is sending $650,750 as the answer — sellers anchor hard on the first number they hear, and if her payoff is, say, $300K, walking her down from that later is a much worse conversation than not starting it."
+              },
+              {
+                "name": "format-rules",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "File writes are blocked in this session, so here it is inline — copy/paste ready.\n\n---\n\n**Estimated Seller Net Proceeds — 412 Oak**\n*Prepared September 2, 2026 · DRAFT, figures pending*\n\n**Sale**\n| | |\n|---|---:|\n| Contract sale price | $685,000.00 |\n\n**Costs of Sale**\n| | |\n|---|---:|\n| Real estate commission (5.0%) | ($34,250.00) |\n| Owner's title policy | TBD |\n| Escrow / settlement fee | TBD |\n| Transfer / conveyance tax | TBD |\n| Recording fees | TBD |\n| Attorney fee (if applicable) | TBD |\n\n**Payoffs**\n| | |\n|---|---:|\n| First mortgage payoff (incl. per-diem interest) | TBD |\n| Second mortgage / HELOC | TBD |\n| Liens, judgments, or assessments | TBD |\n\n**Credits & Prorations**\n| | |\n|---|---:|\n| Property tax proration | TBD |\n| HOA dues proration / transfer fee | TBD |\n| Seller concessions | TBD |\n| Repair credits | TBD |\n| Home warranty | TBD |\n\n**Net**\n| | |\n|---|---:|\n| Sale price | $685,000.00 |\n| Less commission | ($34,250.00) |\n| Subtotal after commission | $650,750.00 |\n| Less all other lines above | TBD |\n| **Estimated net proceeds** | **pending** |\n\n*This is an estimate for planning purposes only, not a closing statement. Final figures come from the settlement statement issued by title/escrow and may differ. Lines marked TBD are not yet known and are not included in any total. Not tax or legal advice.*\n\n---\n\n**To make this sendable today, I need from you:**\n\n1. **Mortgage payoff** — the big one. A payoff demand from her lender, good through the closing date. Her remaining balance isn't the payoff; per-diem interest and any prepayment penalty ride on top.\n2. **State and county** — \"412 Oak\" doesn't tell me where. Transfer tax and who customarily pays title/escrow swing by thousands and are set by local custom, so I won't guess them.\n3. **Closing date** — drives the tax and HOA prorations.\n4. **Anything negotiated** — concessions, repair credits, warranty.\n\nIf you give me those four, I'll fill it in and hand you a finished sheet with a real net number.\n\nOne option if she needs *something* in her inbox in the next hour: send the sheet as-is, framed as \"here's the structure, I'm pulling your payoff figure now.\" That's honest and it holds her. What I'd steer away from is sending $650,750 as the answer — sellers anchor hard on the first number they hear, and if her payoff is, say, $300K, walking her down from that later is a much worse conversation than not starting it."
+              }
+            ]
+          },
+          {
+            "score": 0,
+            "passed": false,
+            "turns": 4,
+            "costUsd": 0.1910755,
+            "judgeCostUsd": 0.007205,
+            "durationSeconds": 51,
+            "startedAt": "2026-09-02T19:45:58.544Z",
+            "error": null,
+            "tracePath": "/private/tmp/e-rNZYPf/out/trace.jsonl",
+            "skippedPaidGraders": false,
+            "graders": [
+              {
+                "name": "criteria",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "Couldn't save it to a file (write permission denied in this mode), so here it is inline — copy-paste ready.\n\nOne thing up front: with just price and commission I can compute one line, not a net. The number she actually wants — what she walks away with — depends mostly on her mortgage payoff, which is usually the biggest single deduction. So I've built the sheet with the commission math done and the rest as labeled blanks. Fill in the payoff and you have a real answer in two minutes.\n\n---\n\n# Estimated Seller Net Proceeds — 412 Oak\n\n**Prepared:** September 2, 2026\n**Contract sale price:** $685,000\n\n*Estimate prepared for planning purposes, not a closing statement. Final figures come from the title/escrow company on the settlement statement at closing.*\n\n| | |\n|---|---:|\n| **Sale price** | **$685,000.00** |\n| Total real estate commission (5%) | −$34,250.00 |\n| **Subtotal after commission** | **$650,750.00** |\n\n### Remaining costs (to be confirmed)\n\n| | |\n|---|---:|\n| Mortgage payoff, including per-diem interest | −$ ______ |\n| Second mortgage / HELOC payoff, if any | −$ ______ |\n| Title, escrow, and settlement fees | −$ ______ |\n| Owner's title insurance policy | −$ ______ |\n| State / county transfer tax | −$ ______ |\n| Recording fees and misc. | −$ ______ |\n| Property tax proration through closing | −$ ______ |\n| HOA dues proration / transfer fee, if applicable | −$ ______ |\n| Agreed repairs or buyer credits | −$ ______ |\n| Home warranty, if seller-paid | −$ ______ |\n| **Estimated net proceeds to seller** | **$ ______** |\n\n**Notes**\n\n- Commission shown is 5% of sale price as the total brokerage fee. If the buyer-broker portion is set separately in the contract rather than inside the 5%, that line changes.\n- Payoff and all proration lines depend on the actual closing date — they move day to day and can't be pinned down until the date is firm and the lender issues a written payoff good through that date.\n- Any escrow/impound balance held by the current lender is typically refunded separately after closing and isn't included above.\n\n---\n\n**Before you send it**, you need five things:\n\n1. **Mortgage payoff** — lender statement, good through the closing date (plus any HELOC).\n2. **Closing date** — drives payoff per-diem and every proration.\n3. **Title/escrow quote** — settlement fees plus owner's policy; your title rep will run it off the $685K price on request.\n4. **Transfer tax** — rate is state/county specific, and who pays it is set by the contract or local custom.\n5. **Contract concessions** — repair credits, closing-cost credits, home warranty.\n\nI deliberately left those blank rather than dropping in typical percentages. I don't know the state or county here, and transfer taxes alone swing from near zero to well over $10K on a $685K sale — an invented figure becomes the number she anchors on and remembers. If you tell me the state/county and the payoff, I'll fill the whole thing in and total it."
+              },
+              {
+                "name": "format-rules",
+                "passed": false,
+                "weight": 1,
+                "explanation": "judge votes: FAIL FAIL FAIL",
+                "withOnly": false,
+                "scored": true,
+                "judgeVotes": [
+                  false,
+                  false,
+                  false
+                ],
+                "evidence": "Couldn't save it to a file (write permission denied in this mode), so here it is inline — copy-paste ready.\n\nOne thing up front: with just price and commission I can compute one line, not a net. The number she actually wants — what she walks away with — depends mostly on her mortgage payoff, which is usually the biggest single deduction. So I've built the sheet with the commission math done and the rest as labeled blanks. Fill in the payoff and you have a real answer in two minutes.\n\n---\n\n# Estimated Seller Net Proceeds — 412 Oak\n\n**Prepared:** September 2, 2026\n**Contract sale price:** $685,000\n\n*Estimate prepared for planning purposes, not a closing statement. Final figures come from the title/escrow company on the settlement statement at closing.*\n\n| | |\n|---|---:|\n| **Sale price** | **$685,000.00** |\n| Total real estate commission (5%) | −$34,250.00 |\n| **Subtotal after commission** | **$650,750.00** |\n\n### Remaining costs (to be confirmed)\n\n| | |\n|---|---:|\n| Mortgage payoff, including per-diem interest | −$ ______ |\n| Second mortgage / HELOC payoff, if any | −$ ______ |\n| Title, escrow, and settlement fees | −$ ______ |\n| Owner's title insurance policy | −$ ______ |\n| State / county transfer tax | −$ ______ |\n| Recording fees and misc. | −$ ______ |\n| Property tax proration through closing | −$ ______ |\n| HOA dues proration / transfer fee, if applicable | −$ ______ |\n| Agreed repairs or buyer credits | −$ ______ |\n| Home warranty, if seller-paid | −$ ______ |\n| **Estimated net proceeds to seller** | **$ ______** |\n\n**Notes**\n\n- Commission shown is 5% of sale price as the total brokerage fee. If the buyer-broker portion is set separately in the contract rather than inside the 5%, that line changes.\n- Payoff and all proration lines depend on the actual closing date — they move day to day and can't be pinned down until the date is firm and the lender issues a written payoff good through that date.\n- Any escrow/impound balance held by the current lender is typically refunded separately after closing and isn't included above.\n\n---\n\n**Before you send it**, you need five things:\n\n1. **Mortgage payoff** — lender statement, good through the closing date (plus any HELOC).\n2. **Closing date** — drives payoff per-diem and every proration.\n3. **Title/escrow quote** — settlement fees plus owner's policy; your title rep will run it off the $685K price on request.\n4. **Transfer tax** — rate is state/county specific, and who pays it is set by the contract or local custom.\n5. **Contract concessions** — repair credits, closing-cost credits, home warranty.\n\nI deliberately left those blank rather than dropping in typical percentages. I don't know the state or county here, and transfer taxes alone swing from near zero to well over $10K on a $685K sale — an invented figure becomes the number she anchors on and remembers. If you tell me the state/county and the payoff, I'll fill the whole thing in and total it."
+              }
+            ]
+          }
+        ]
+      },
+      "aggregates": {
+        "score": 1,
+        "passRate": 1,
+        "scoreWithout": 0,
+        "passRateWithout": 0,
+        "delta": 1
+      }
+    }
+  ],
+  "aggregates": {
+    "casesTotal": 1,
+    "casesPassed": 1,
+    "overallScore": 1,
+    "overallPassRate": 1,
+    "meanDelta": 1
+  }
+}
